@@ -1,4 +1,4 @@
-package BackEndTimeTracker.Artifact;
+package BackEndTimeTracker.Controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,15 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import BackEndTimeTracker.Model.Category;
 import BackEndTimeTracker.Repository.CategoryRepository;
+import BackEndTimeTracker.Service.CategoryService;
 
 @RestController
 @RequestMapping("/api")
 public class HomeController {
 
-    CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public HomeController(CategoryRepository categoryRepository){
+    public HomeController(CategoryRepository categoryRepository, CategoryService categoryService){
         this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
     
     
@@ -32,9 +35,9 @@ public class HomeController {
     
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<Category> save(@RequestBody Category newCategory) {
-        categoryRepository.save(newCategory);
+    @PostMapping("/categories")
+    public ResponseEntity<Category> newCategory(@RequestBody Category newCategory) {
+        categoryService.createCategory(newCategory);
         System.out.println(newCategory);
         return ResponseEntity.ok(newCategory);
     }
