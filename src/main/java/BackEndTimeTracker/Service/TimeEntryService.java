@@ -30,6 +30,8 @@ public class TimeEntryService {
         newTimeEntry.setCategory(category);
         newTimeEntry.setStartTime(LocalDateTime.now());
 
+        //findByEndTimeIsNull() returnerar en Optional som innehåller en TimeEntry om det finns en pågående timer, annars returnerar den en tom Optional. Om det finns en pågående timer kastas ett undantag med ett meddelande som informerar användaren om att de måste stoppa den pågående timern innan de kan starta en ny.
+        timeEntryRepository.findByEndTimeIsNull().ifPresent(timeEntry -> {throw new RuntimeException("There is already an ongoing time entry. Please stop it before starting a new one.");});
         return timeEntryRepository.save(newTimeEntry);
     }
 

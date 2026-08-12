@@ -8,4 +8,5 @@ import BackEndTimeTracker.Model.TimeEntry;
 
 public interface TimeEntryRepository extends MongoRepository<TimeEntry, String> {
     
+    Optional<TimeEntry> findByEndTimeIsNull();
 }
