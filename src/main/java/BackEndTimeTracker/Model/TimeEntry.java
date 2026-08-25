@@ -12,22 +12,15 @@ public class TimeEntry {
     @Id
     private String id;
 
-    private Category category;
+    private String categoryId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-
-
+    
     public String getId() {
         return id;
     }
     public void setId(String id) {
         this.id = id;
-    }
-    public Category getCategory() {
-        return category;
-    }
-    public void setCategory(Category category) {
-        this.category = category;
     }
     public LocalDateTime getStartTime() {
         return startTime;
@@ -40,6 +33,12 @@ public class TimeEntry {
     }
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+    public String getCategoryId() {
+        return categoryId;
+    }
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     

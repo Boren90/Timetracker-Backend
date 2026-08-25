@@ -32,7 +32,7 @@ public class TimeEntryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + request.getCategoryId()));
 
         TimeEntry newTimeEntry = new TimeEntry();
-        newTimeEntry.setCategory(category);
+        newTimeEntry.setCategoryId(category.getId());
         newTimeEntry.setStartTime(LocalDateTime.now());
 
         return timeEntryRepository.save(newTimeEntry);
@@ -67,11 +67,14 @@ public class TimeEntryService {
     private TimeEntryResponse mapToResponse(TimeEntry timeEntry) {
 
     TimeEntryResponse response = new TimeEntryResponse();
+    Category category = categoryRepository.findById(timeEntry.getCategoryId())
+        .orElseThrow(() -> new RuntimeException("Category not found with id: " + timeEntry.getCategoryId()));
 
     response.setId(timeEntry.getId());
-    response.setCategory(timeEntry.getCategory());
+    response.setCategoryName(category.getCategoryName());
     response.setStartTime(timeEntry.getStartTime());
     response.setEndTime(timeEntry.getEndTime());
+    response.setCategoryId(category.getId());
     
     
     Duration duration;
@@ -94,10 +97,8 @@ public TimeEntryResponse changeCategory(String id, ChangeTimeEntryCategoryReques
 
     TimeEntry timeEntry = timeEntryRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("TimeEntry not found with id: " + id));
-            
-    Category newCategory = categoryRepository.findById(request.getCategoryId())
-            .orElseThrow(() -> new RuntimeException("TimeEntry not found with id: " + request));
-    timeEntry.setCategory(newCategory);
+
+    timeEntry.setCategoryId(request.getCategoryId());
 
     timeEntryRepository.save(timeEntry);
 
@@ -107,9 +108,11 @@ public TimeEntryResponse changeCategory(String id, ChangeTimeEntryCategoryReques
 
 private TimeEntryResponse mapToResponseCategory(TimeEntry timeEntry) {
     TimeEntryResponse response = new TimeEntryResponse();
+    Category category = categoryRepository.findById(timeEntry.getCategoryId())
+        .orElseThrow(() -> new RuntimeException("Category not found with id: " + timeEntry.getCategoryId()));
 
     response.setId(timeEntry.getId());
-    response.setCategory(timeEntry.getCategory());
+    response.setCategoryName(category.getCategoryName());
     response.setStartTime(timeEntry.getStartTime());
     response.setEndTime(timeEntry.getEndTime());
     
