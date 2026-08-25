@@ -1,5 +1,6 @@
 package BackEndTimeTracker.Service;
 
+import java.io.Console;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import BackEndTimeTracker.DTO.ChangeTimeEntryCategoryRequest;
 import BackEndTimeTracker.DTO.StartTimeEntryRequest;
 import BackEndTimeTracker.DTO.TimeEntryResponse;
 import BackEndTimeTracker.Model.Category;
@@ -50,6 +52,8 @@ public class TimeEntryService {
     }
 
 
+    
+    
     public List<TimeEntryResponse> getAllTimeEntries() {
 
     List<TimeEntry> timeEntries = timeEntryRepository.findAll();
@@ -58,8 +62,6 @@ public class TimeEntryService {
             .map(this::mapToResponse)
             .toList();
 }
-
-
 
 
     private TimeEntryResponse mapToResponse(TimeEntry timeEntry) {
@@ -86,6 +88,51 @@ public class TimeEntryService {
         response.setDuration(duration.toSeconds());
 
     return response;
+}
+
+public TimeEntryResponse changeCategory(String id, ChangeTimeEntryCategoryRequest request) {
+
+    TimeEntry timeEntry = timeEntryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("TimeEntry not found with id: " + id));
+            
+    Category newCategory = categoryRepository.findById(request.getCategoryId())
+            .orElseThrow(() -> new RuntimeException("TimeEntry not found with id: " + request));
+    timeEntry.setCategory(newCategory);
+
+    timeEntryRepository.save(timeEntry);
+
+
+    return mapToResponseCategory(timeEntry);
+}
+
+private TimeEntryResponse mapToResponseCategory(TimeEntry timeEntry) {
+    TimeEntryResponse response = new TimeEntryResponse();
+
+    response.setId(timeEntry.getId());
+    response.setCategory(timeEntry.getCategory());
+    response.setStartTime(timeEntry.getStartTime());
+    response.setEndTime(timeEntry.getEndTime());
+    
+    Duration duration;
+    if (timeEntry.getEndTime() != null) {
+            duration = Duration.between(
+                    timeEntry.getStartTime(),
+                    timeEntry.getEndTime());
+                } else {//failsafe för om getEndTime är null
+                    duration = Duration.between(
+                            timeEntry.getStartTime(),
+                            LocalDateTime.now());
+                }
+                    
+        response.setDuration(duration.toSeconds());
+
+    return response;
+}
+
+public void deleteTimeEntry(String id) {
+    TimeEntry timeEntry = timeEntryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("TimeEntry not found with id: " + id));
+    timeEntryRepository.delete(timeEntry);
 }
 
 }

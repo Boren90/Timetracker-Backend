@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import BackEndTimeTracker.DTO.ChangeTimeEntryCategoryRequest;
 import BackEndTimeTracker.DTO.StartTimeEntryRequest;
 import BackEndTimeTracker.DTO.TimeEntryResponse;
 import BackEndTimeTracker.Model.TimeEntry;
 import BackEndTimeTracker.Service.TimeEntryService;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -37,7 +39,7 @@ public class TimeEntryController {
         return ResponseEntity.ok(timeEntryService.startTimeEntry(request));
     }
 
-    @PutMapping("/timeentries/{id}")
+    @PutMapping("/timeentries/{id}/stop")
     public ResponseEntity <TimeEntry> stopTimeEntry(@PathVariable String id) {
         TimeEntry response = timeEntryService.stopTimeEntry(id);
         
@@ -62,5 +64,21 @@ public class TimeEntryController {
 
     return ResponseEntity.noContent().build();
 }
+
+    @PutMapping("/timeentries/{id}")
+    public ResponseEntity<TimeEntryResponse> changeTimeEntryCategory(@PathVariable String id, @RequestBody ChangeTimeEntryCategoryRequest request) {
+
     
+    TimeEntryResponse response= timeEntryService.changeCategory(id, request);
+
+    return ResponseEntity.ok(response);
+}
+
+    @DeleteMapping("timeentries/{id}")
+    public ResponseEntity<Void> deleteTimeEntry(@PathVariable String id) {
+    timeEntryService.deleteTimeEntry(id);
+    return ResponseEntity.noContent().build();      
+    
+}
+
 }
